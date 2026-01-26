@@ -1,98 +1,81 @@
-import { Image } from 'expo-image';
-import React, { useCallback } from 'react';
-import {
-    FlatList,
-    SafeAreaView,
-    StyleSheet,
-    Text,
-    View,
-} from 'react-native';
-
-type Product = {
-  id: string;
-  name: string;
-  image: string;
-};
-
-const PRODUCTS: Product[] = [
-  {
-    id: 'SP001',
-    name: 'Rau xà lách hữu cơ',
-    image: 'https://images.pexels.com/photos/4051021/pexels-photo-4051021.jpeg',
-  },
-  {
-    id: 'SP002',
-    name: 'Cà chua bi Đà Lạt',
-    image: 'https://images.pexels.com/photos/8390/food-wood-tomatoes.jpg',
-  },
-  {
-    id: 'SP003',
-    name: 'Khoai tây sạch',
-    image: 'https://images.pexels.com/photos/4110473/pexels-photo-4110473.jpeg',
-  },
-  {
-    id: 'SP004',
-    name: 'Dưa leo hữu cơ',
-    image: 'https://images.pexels.com/photos/143133/pexels-photo-143133.jpeg',
-  },
-];
-
-// Memoized product card component
-const ProductCard = React.memo(({ item }: { item: Product }) => (
-  <View style={styles.card}>
-    <Image
-      source={{ uri: item.image }}
-      style={styles.image}
-      contentFit="cover"
-      transition={200}
-      cachePolicy="memory-disk"
-      priority="high"
-    />
-    <View style={styles.cardBody}>
-      <Text style={styles.name}>{item.name}</Text>
-      <Text style={styles.id}>Mã sản phẩm: {item.id}</Text>
-    </View>
-  </View>
-));
-
-ProductCard.displayName = 'ProductCard';
+import React from 'react';
+import { View, StyleSheet, ScrollView, TextInput, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { MaterialIcons } from '@expo/vector-icons';
+import { ThemedText } from '@/components/themed-text';
+import { ThemedView } from '@/components/themed-view';
+import { HomeHeader } from '@/components/HomeHeader';
+import { CategoryCard } from '@/components/CategoryCard';
+import { ProductCard } from '@/components/ProductCard';
+import { categories, products } from '@/data/mockData';
+import { Colors } from '@/constants/theme';
+import { useColorScheme } from '@/hooks/use-color-scheme';
 
 export default function HomeScreen() {
-  const renderItem = useCallback(({ item }: { item: Product }) => (
-    <ProductCard item={item} />
-  ), []);
-
-  const getItemLayout = useCallback(
-    (_: any, index: number) => ({
-      length: 196, // height của card (160 + 36 padding)
-      offset: 196 * index,
-      index,
-    }),
-    []
-  );
-
-  const keyExtractor = useCallback((item: Product) => item.id, []);
+  const colorScheme = useColorScheme() ?? 'light';
+  const themeColors = Colors[colorScheme];
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>🌱 Nông sản nổi bật</Text>
-        <Text style={styles.subtitle}>Danh sách sản phẩm mẫu để bạn test UI</Text>
-      </View>
+    <SafeAreaView style={[styles.container, { backgroundColor: themeColors.background }]} edges={['bottom']}>
+      <HomeHeader />
 
-      <FlatList
-        data={PRODUCTS}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-        contentContainerStyle={styles.listContent}
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
-        removeClippedSubviews={true}
-        maxToRenderPerBatch={5}
-        updateCellsBatchingPeriod={50}
-        initialNumToRender={4}
-        windowSize={5}
-        getItemLayout={getItemLayout}
-      />
+      >
+        {/* Search Bar */}
+        <View style={[styles.searchContainer, { backgroundColor: themeColors.searchBackground }]}>
+          <MaterialIcons name="search" size={20} color={themeColors.icon} style={styles.searchIcon} />
+          <TextInput
+            style={[styles.searchInput, { color: themeColors.text }]}
+            placeholder="Tìm kiếm nông sản..."
+            placeholderTextColor={themeColors.textSecondary}
+          />
+        </View>
+
+        {/* Categories Section */}
+        <View style={styles.section}>
+          <ThemedText style={styles.sectionTitle} type="subtitle">
+            Danh mục
+          </ThemedText>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.categoriesContainer}
+          >
+            {categories.map((category) => (
+              <CategoryCard key={category.id} category={category} />
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Promotions Section */}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <ThemedText style={styles.sectionTitle} type="subtitle">
+              Khuyến mãi đặc biệt
+            </ThemedText>
+            <TouchableOpacity>
+              <ThemedText style={[styles.viewAll, { color: themeColors.tint }]} type="link">
+                Xem tất cả
+              </ThemedText>
+            </TouchableOpacity>
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.productsContainer}
+          >
+            {products.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </ScrollView>
+        </View>
+
+        {/* Bottom padding để không bị che bởi tab bar */}
+        <View style={{ height: 100 }} />
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -100,53 +83,59 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F7FA',
   },
-  header: {
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 16,
+    paddingTop: 16,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 12,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#1A3C2F',
-  },
-  subtitle: {
-    marginTop: 4,
-    fontSize: 13,
-    color: '#6B7280',
-  },
-  listContent: {
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 16,
-    overflow: 'hidden',
-    marginBottom: 16,
+    marginBottom: 24,
     shadowColor: '#000',
     shadowOpacity: 0.05,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 4 },
+    shadowRadius: 4,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
     elevation: 2,
   },
-  image: {
-    width: '100%',
-    height: 160,
+  searchIcon: {
+    marginRight: 12,
   },
-  cardBody: {
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
   },
-  name: {
-    fontSize: 16,
+  section: {
+    marginBottom: 24,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 12,
+  },
+  viewAll: {
+    fontSize: 14,
     fontWeight: '600',
-    color: '#111827',
   },
-  id: {
-    marginTop: 4,
-    fontSize: 13,
-    color: '#6B7280',
+  categoriesContainer: {
+    paddingRight: 16,
+  },
+  productsContainer: {
+    paddingRight: 16,
   },
 });

@@ -1,51 +1,10 @@
+// Learn more https://docs.expo.dev/guides/customizing-metro
 const { getDefaultConfig } = require('expo/metro-config');
 
+/** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(__dirname);
 
-// Performance optimizations
-config.transformer = {
-  ...config.transformer,
-  minifierPath: 'metro-minify-terser',
-  minifierConfig: {
-    // Terser options for better minification
-    keep_classnames: false,
-    keep_fnames: false,
-    mangle: {
-      toplevel: false,
-      keep_classnames: false,
-      keep_fnames: false,
-    },
-    output: {
-      ascii_only: true,
-      quote_style: 3,
-      wrap_iife: true,
-    },
-    sourceMap: {
-      includeSources: false,
-    },
-    toplevel: false,
-    compress: {
-      drop_console: process.env.NODE_ENV === 'production',
-      reduce_funcs: true,
-      collapse_vars: true,
-      reduce_vars: true,
-    },
-  },
-};
-
-// Optimize resolver
-config.resolver = {
-  ...config.resolver,
-  // Use haste maps for faster module resolution
-  useWatchman: true,
-};
-
-// Enable caching for faster rebuilds
-config.cacheStores = [
-  {
-    type: 'FileStore',
-    root: require('path').join(__dirname, '.metro'),
-  },
-];
+// Add support for .mjs and .cjs files (required for Firebase v12+)
+config.resolver.sourceExts.push('mjs', 'cjs');
 
 module.exports = config;

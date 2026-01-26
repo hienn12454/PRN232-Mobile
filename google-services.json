@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1073724553842",
+    "project_id": "prn232-dc13f",
+    "storage_bucket": "prn232-dc13f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1073724553842:android:d8f153bd328448fd30a0eb",
+        "android_client_info": {
+          "package_name": "com.prn232.expomobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1073724553842-vaa0e7pqu9dm052r775hpfbkrk771ekv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAcWCdPz84kEPphPaH7rjj2smgoOAgcxc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1073724553842-vaa0e7pqu9dm052r775hpfbkrk771ekv.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1073724553842-5d1p8358a8m3pgmpvbrli85hd3p6esii.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.prn232mobile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
